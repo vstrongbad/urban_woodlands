@@ -9,9 +9,9 @@ The Urban Woodland Pursuit is integrating datasets from social and ecological sc
 
 ## Collaborators
 
--Vince D'Amico
--Mysha Clarke
--Amanda Bunce
--Megan Carr
--Lindsay Darling
+- Vince D'Amico
+- Mysha Clarke
+- Amanda Bunce
+- Megan Carr
+- Lindsay Darling
 
