@@ -1,20 +1,22 @@
 library(raster)
 library(gfcanalysis)
-library(httr)
-library(acs)
 
 test <-raster('/nfs/mshelley-data/hansen test.tif')
 
-acs <- GET("api.census.gov/data/2016/acs/acs1/profile?get=DP02_0001PE&for=state:*?&key=8de74022e3813cdf1da76a6230a84d076bdf4ebe")
-my_key <- "8de74022e3813cdf1da76a6230a84d076bdf4ebe"
 
+library(acs)
 library(dplyr)
+
+acs <- GET("api.census.gov/data/2016/acs/acs1/profile?get=DP02_0001PE&for=state:*?&key=8de74022e3813cdf1da76a6230a84d076bdf4ebe")
+my_key <-  "" #put your key in between quotes
+  
 # Load acs library
 # Complete docs at https://cran.r-project.org/web/packages/acs/acs.pdf
-library(acs)
-
 md.blkgrp = geo.make(block.group="*", tract="*", county="*", state="MD")
 b03002 <- acs.fetch(geography=md.blkgrp, table.number="B03002", endyear='2015', span=5, key=my_key)
+
+
+
 
 # First, create a geography
 # For example, all counties in Texas
@@ -45,26 +47,3 @@ tx.counties.b03002 <- data.frame(cbind(data.frame(b03002@geography), data.frame(
 # Now I have a data frame I can use.
 str(tx.counties.b03002)
 
-# -30-
-@mshelley1
-
-Attach files by dragging & dropping,
-
-, or pasting from the clipboard.
-Styling with Markdown is supported
-
-© 2018 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Help
-
-Contact GitHub
-API
-Training
-Shop
-Blog
-About
-
-Press h to open a hovercard with more details.
