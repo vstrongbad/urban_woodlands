@@ -27,7 +27,7 @@ Amanda and Vince: Acquire forest composition datasets and integrate them into NP
 
 ## Collaborators
 
-- Vince D'Amico USDA FS
+- Vince D'Amico
 - Mysha Clarke
 - Amanda Bunce
 - Megan Carr
