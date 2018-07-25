@@ -1,31 +1,26 @@
-library(raster)
-library(gfcanalysis)
 
-test <-raster('/nfs/mshelley-data/hansen test.tif')
+# library(raster)
+# library(gfcanalysis)
+# 
+# test <-raster('/nfs/mshelley-data/hansen test.tif')
 
 
 library(acs)
 library(dplyr)
 
-acs <- GET("api.census.gov/data/2016/acs/acs1/profile?get=DP02_0001PE&for=state:*?&key=8de74022e3813cdf1da76a6230a84d076bdf4ebe")
 my_key <-  "" #put your key in between quotes
   
 # Load acs library
 # Complete docs at https://cran.r-project.org/web/packages/acs/acs.pdf
 md.blkgrp = geo.make(block.group="*", tract="*", county="*", state="MD")
-b03002 <- acs.fetch(geography=md.blkgrp, table.number="B03002", endyear='2015', span=5, key=my_key)
+md.county = geo.make(county="*", state="MD")
+md.tract = geo.make(tract="*", county="*", state="MD")
 
+b19013 <- acs.fetch(geography=md.blkgrp, table.number="B19013", endyear='2011',  key=my_key)
+b19013 <- acs.fetch(geography=md.county, table.number="B19013", endyear='2011',  key=my_key)
+b19013 <- acs.fetch(geography=md.tract, table.number="B19013", endyear='2011',  key=my_key)
 
-
-
-# First, create a geography
-# For example, all counties in Texas
-tx.counties = geo.make(county="*", state='TX')
-# Or all tracts in Dallas and Tarrant county, using fips code
-tx.tracts = geo.make(tract='*', county=c(113, 439), state='TX')
-
-# Get a table by its code with the geography you just made
-b03002 <- acs.fetch(geography=tx.counties, table.number="B03002", endyear='2015', span=5)
+#TO DO: try getting tracts for counties only in census area
 
 # See the structure
 str(b03002)
