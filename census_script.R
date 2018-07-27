@@ -1,49 +1,46 @@
-library(raster)
-library(gfcanalysis)
+#
+# Script extracts census info based on input list of counties (st and county fips) and census variable names
+#
 
-test <-raster('/nfs/mshelley-data/hansen test.tif')
-
-
-library(acs)
+library(devtools)
+library(ggplot2)
+library(tidyr)
 library(dplyr)
+library(tidycensus)
+library(data.table)
 
-acs <- GET("api.census.gov/data/2016/acs/acs1/profile?get=DP02_0001PE&for=state:*?&key=8de74022e3813cdf1da76a6230a84d076bdf4ebe")
-my_key <-  "" #put your key in between quotes
+# Put your key in the quotes and run so it doesn't have to be specified wiht each api call
+census_api_key("", install=T)
+
+# Import tables of desired variables and counties; limit to unique counties
+counties<-fread("/nfs/urbanwoodlands-data/Datasets/Data - Socioeconomic Context/Census Data/MergedCounties.csv") %>%
+          select(STATE_FIPS, CNTY_FIPS) %>%
+          unique()
+census_vars <- as.character(read.csv("/nfs/urbanwoodlands-data/Datasets/Data - Socioeconomic Context/Census Data/CensusVars.csv", head=F)$V1)
+
+# Create blank data frame for holding api returns
+tbl <- data.frame()
+# Loop through all the counties to return blockgroup-level info and rbind to tbl
+for (c in 1:nrow(counties)) {
+    st=counties[c,1]
+    co=counties[c,2]
+    x<-get_acs(geography='block group', variables=census_vars, year=2015, state=st, county=co)
+    tbl<-rbind(tbl,x)
+    c+1
+  }
+
+# Spread out the eav structure
+tidytbl<-select(tbl, -moe) %>%
+         spread(key = variable, value=estimate)
+
+# Check that blockgroups are unique: yes
+  #select(tidytbl, GEOID, NAME) %>%
+  #unique() %>%
+  #nrow()
   
-# Load acs library
-# Complete docs at https://cran.r-project.org/web/packages/acs/acs.pdf
-md.blkgrp = geo.make(block.group="*", tract="*", county="*", state="MD")
-b03002 <- acs.fetch(geography=md.blkgrp, table.number="B03002", endyear='2015', span=5, key=my_key)
+# Write tidy results 
+  write.csv(tidytbl, "/nfs/urbanwoodlands-data/Datasets/Data - Socioeconomic Context/Census Data/acs2015_blkgrps_111counties.csv")
 
 
 
-
-# First, create a geography
-# For example, all counties in Texas
-tx.counties = geo.make(county="*", state='TX')
-# Or all tracts in Dallas and Tarrant county, using fips code
-tx.tracts = geo.make(tract='*', county=c(113, 439), state='TX')
-
-# Get a table by its code with the geography you just made
-b03002 <- acs.fetch(geography=tx.counties, table.number="B03002", endyear='2015', span=5)
-
-# See the structure
-str(b03002)
-# Notice it's made up of several data structures. The ones we want are @geography, which includes FIPS info
-str(b03002@geography)
-# And @estimate that has the actual estimates from the ACS table, which is still pretty convaluted. 
-str(b03002@estimate)
-
-# So let's get those peices into a data frame we can better deal with using dplyr.
-# Notice, I'm using the variable codes to combine data into new variables I want.
-tx.counties.b03002 <- data.frame(cbind(data.frame(b03002@geography), data.frame(b03002@estimate))) %>%
-  rowwise() %>% summarize(
-    fips=paste0(state, county),
-    percent_hispanic=B03002_012/B03002_001,
-    percent_white=B03002_003/B03002_001,
-    percent_black=B03002_004/B03002_001
-  )
-
-# Now I have a data frame I can use.
-str(tx.counties.b03002)
 
