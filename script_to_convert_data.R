@@ -9,7 +9,7 @@ library(RColorBrewer)
 library(plotly)
 library(tibble)
 
-#get some sample data and convert it
+#get some sample data and convert it from x to NPS JPS
 
 NPS_trees <- read_csv(file="tree_data_nps.csv")
 
