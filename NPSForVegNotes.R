@@ -1,4 +1,5 @@
-#Working with NPSForVeg
+#Working with NPSForVeg - how to use the NPS R package
+
 library(devtools) 
 install_github('NCRN/NPSForVeg') #load package
 library(NPSForVeg)
