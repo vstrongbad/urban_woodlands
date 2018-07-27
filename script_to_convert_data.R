@@ -9,6 +9,7 @@ library(RColorBrewer)
 library(plotly)
 library(tibble)
 
+#get some sample data
 
 NPS_trees <- read_csv(file="tree_data_nps.csv")
 
